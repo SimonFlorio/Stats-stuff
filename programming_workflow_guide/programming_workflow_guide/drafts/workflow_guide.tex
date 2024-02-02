@@ -1,0 +1,655 @@
+\documentclass[12pt]{article}
+\usepackage[sort]{natbib}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsfonts, mathtools}
+\usepackage{amsthm}
+\usepackage{setspace}
+\usepackage[labelfont=bf]{caption}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{hyperref}
+\usepackage{multirow}
+\usepackage{longtable}
+\usepackage[table]{xcolor}
+\usepackage{hhline}
+%\usepackage{csquotes}
+\usepackage{fancyhdr}
+\usepackage{xcolor}
+\usepackage{soul}
+\usepackage{hyperref}
+
+
+\newcommand{\orth}{\ensuremath{\perp\!\!\!\perp}}%
+\newcommand{\indep}{\orth}%
+\newcommand{\notorth}{\ensuremath{\perp\!\!\!\!\!\!\!\diagup\!\!\!\!\!\!\!\perp}}%
+\newcommand{\notindep}{\notorth}%
+
+\newtheorem{definition}{Definition}
+\newtheorem{axiom}{Axiom}
+\newtheorem{theorem}{Theorem}
+\newtheorem{assumption}{Assumption}
+\newtheorem{proposition}{Proposition}
+\newtheorem{corollary}{Corollary}
+\newtheorem{lemma}{Lemma}
+\newtheorem{example}{Example}
+\newtheorem{remark}{Remark}
+
+%\usepackage{minted}
+\usepackage{dirtree}
+
+\newcommand{\hlc}[2][yellow]{{%
+    \colorlet{foo}{#1}%
+    \sethlcolor{foo}\hl{#2}}%
+}
+
+\newcommand{\ctext}[1]{\hlc[teal!20]{\texttt{#1}}}
+
+%\usepackage{times}
+%\usepackage[italic, noexclam, nopunctuation, noplus, nominus, noplusnominus, noequal, noparenthesis, nospecials, defaultnormal]{mathastext}
+\usepackage[typeface=times, sanstypeface=helvetica, monotypeface=cm, fontencoding=T1, printinfo]{typeface} 
+
+\usepackage{listings}
+
+
+%\usepackage[colorinlistoftodos,textsize=footnotesize]{todonotes}
+%\usepackage[colorlinks]{hyperref}
+%\setlength{\marginparwidth}{4cm}
+\usepackage{soul}
+
+
+\makeatletter
+\newcommand{\textlabel}[2]{%
+  \phantomsection
+  #1\def\@currentlabel{\unexpanded{#1}}\label{#2}%
+}
+\makeatother
+
+
+\begin{document}
+
+\author{Ganesh Karapakula}
+\title{Programming Workflow Guide for Research Projects \vspace{-2mm}}
+\date{\vspace{-1mm}\small October 2022}
+
+\maketitle
+
+\vspace{-12mm}
+\begin{abstract} 
+\noindent This document contains some resources and guidelines on programming workflow and practices for producing reproducible research outputs. This guide first discusses how to organize workflow using a version control system called Git, before addressing some basic aspects of reproducible code. This document also provides R- and Stata-based guidelines for writing customized statistical programs and for automating creation of customized tables in TeX format. Other aspects of programming workflow are also discussed. This guide is intended for readers with at least some basic knowledge of R, Stata, and TeX, but no prior knowledge of Git is assumed. A folder containing code templates for a worked example accompanies this guide.
+\end{abstract}
+
+\onehalfspacing
+
+\section{Organizing Workflow Using Git}
+\label{section:git}
+
+Imagine a research project involving several collaborators who all may be involved in preparing the manuscript and writing code (to generate tables and graphs to be included in the manuscript). Over the course of the project, it is useful to keep track of the various versions of the project folder and to have a record of which files were modified by whom, how, and when. In the old days, collaborators would exchange files either via email or through a shared directory, and they would try to archive each version of each file (e.g., by including the date and author's initials in the file's name). However, this method is outdated because it is cumbersome, inefficient, and error-prone. The modern way to organize project workflow is through version control software, which records changes to a folder's contents over time, allowing one to review edits made over time and also to revert files (or even the entire folder) to a previous state if necessary.
+
+Git is a widely used, free, open-source distributed version control system. Unlike centralized systems where files are stored on a single server that the collaborators access remotely, Git uses a distributed approach to version control: the complete source code, including its full version history, is mirrored on every collaborator's computer; in addition, collaborators have the ability to work offline and independently and then to synchronize their changes. When collaborators make updates, Git records the edits made to the modified files and also keeps a list of the unchanged files. Thus, Git allows the project's participants to collaborate efficiently by allowing them to merge and synchronize changes to the project folder and by tracking edits made to the files over time.
+
+A Git-tracked repository, also known as ``repo,'' is a collection of source code, usually a folder, with a \texttt{.git} subfolder. GitHub is an online file hosting platform that can be used to create and host Git-tracked repositories remotely. Once a repo is created on GitHub, one can add or remove files or make any other changes to them both remotely (on the GitHub website) and locally (on one’s personal computer). You can start organizing your project workflow using Git by following the below introductory steps:
+\begin{enumerate}
+    \item Create an account at \href{https://github.com}{\texttt{https://github.com}} and create or join a repository.
+    \item Download Git Bash from \href{https://git-scm.com/downloads}{\texttt{https://git-scm.com/downloads}} and install it.
+    \item Set up your identity by opening Git Bash on Windows 10 OS or Terminal on macOS and then entering the following two commands:\\
+    \ctext{git config {-}{-}global.. user.name "Name"}\\
+    \ctext{git config {-}{-}global.. user.email example@example.com}\\
+    where \ctext{Name} should be replaced with your name and \ctext{example@example.com} should be replaced with your email address. For further help, see \href{https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup}{\texttt{https://git-scm.com/book/ en/v2/Getting-Started-First-Time-Git-Setup}}.
+    \item Create a personal access token (PAT) and copy it using the instructions at the following link:
+    \href{https://docs.github.com/en/github/authenticating-to-github/keeping-your-account-and-data-secure/creating-a-personal-access-token}{\texttt{https://docs.github.com/en/github/authenticating-to-github/keeping-\\your-account-and-data-secure/creating-a-personal-access-token}}.
+    \item On Windows 10 OS, it is possible to store GitHub credentials in order to avoid having to enter the password each time the repository needs to be updated from a local computer. Open ``Credential Manager,'' click on ``Windows Credentials,'' and select ``Add a generic credential.'' Enter \ctext{git:https://github.com} in the ``Internet or network address'' field. Enter the GitHub username and the PAT in the ``User name'' and ``Password'' fields, respectively, and click on ``OK.'' On macOS, the PAT can be entered using the instructions here: \href{https://docs.github.com/en/github/getting-started-with-github/getting-started-with-git/updating-credentials-from-the-macos-keychain}{\texttt{https://docs.github.com/en/github/getting-started-with-github/get\\ting-started-with-git/updating-credentials-from-the-macos-keychain}}.
+    \item To ``clone'' a repository on a local computer, open Git Bash (or Terminal on macOS) and use the \ctext{cd} command to change directory to the location where you wish to place the local repository. Then, if the repository is located at \texttt{https://github.com/username/reponame}, where \texttt{reponame} is the name of the repository, then entering the following command (in Git Bash on Windows 10 OS or Terminal on macOS) should clone the repository locally:\\
+    \ctext{git clone https://github.com/username/reponame.git}\\ where \ctext{username} and \ctext{reponame} should be modified appropriately. %This applies for those using the HTTPS protocol. Enter \\
+    %\ctext{git clone git@github.com:username/reponame.git}\\ instead when using the SSH protocol rather than HTTPS.
+    \item To update the local repository on Windows 10 OS, first right-click on the folder and select ``Git Bash Here.'' To do so on macOS, open Terminal and change directory to the local repository folder (using the \ctext{cd} command). Then, entering the command \\\ctext{git pull}\\ should usually do the job. When this does not work, entering\\ \ctext{git reset {-}{-}hard.. HEAD} \\should fully reset the local repository according to the latest version of the remote repository, although any previous changes on the local repository may be erased if they were not updated on the remote repository.
+    \item After making changes to the local repository (by modifying, adding, or deleting files), the following commands should be entered sequentially (using Git Bash on Windows 10 OS or Terminal on macOS) to ``push'' these changes onto the remote repository: \\
+    \ctext{git add .}  \\
+    \ctext{git commit -m "message"} \\
+    \ctext{git push} \\
+    so that the first command adds all new changes, the second command (in which \ctext{message} should be replaced with a description of the changes) commits changes, and the third command completes the process by pushing changes to the remote repository.
+\end{enumerate}
+
+The above guidelines usually suffice for small-scale and non-complex collaborations. Git has several other features, such as ``branching'' and ``merging,'' for more complex workflows and collaborations. The following resources provide additional help and guidance on these features:
+\begin{itemize}
+    \item \href{https://training.github.com/downloads/github-git-cheat-sheet}{\texttt{https://training.github.com/downloads/github-git-cheat-sheet}}
+    \item \href{https://education.github.com/git-cheat-sheet-education.pdf}{\texttt{https://education.github.com/git-cheat-sheet-education.pdf}}
+    \item \href{http://book.git-scm.com/book/en/v2}{\texttt{http://book.git-scm.com/book/en/v2}}
+\end{itemize}
+
+\section{Writing Reproducible Code}
+
+A common situation in empirical research is that large or restricted-access data files are often stored in a directory separate from the repository containing the code files. Suppose Alice and Bob are collaborators on a project in this situation, and suppose their panel data files (in \texttt{.dta} format) from two survey waves are located on their macOS and Windows 10 OS computers, respectively, as shown in the following diagram:
+
+\clearpage
+\begin{center}
+\begin{tabular}{ll}
+Alice's data directory on macOS: & Bob's data directory on Windows 10: \\[-5mm]\\
+\begin{minipage}{7cm}\dirtree{%
+.1 /Users/alice/Desktop.
+.2 projAB.
+.3 Data.
+.4 wave1.
+.5 file1a.dta.
+.5 file1b.dta.
+.4 wave2.
+.5 file2a.dta.
+.5 file2b.dta.
+}\end{minipage}    
+& \begin{minipage}{7cm}\dirtree{%
+.1 C:/Users/Bob/Documents.
+.2 ProjectBA.
+.3 Data.
+.4 wave1.
+.5 file1a.dta.
+.5 file1b.dta.
+.4 wave2.
+.5 file2a.dta.
+.5 file2b.dta.
+}\end{minipage}\\
+\end{tabular}
+\end{center}
+
+
+Suppose Bob creates Stata do-files containing lines of code such as the following:\\
+\ctext{use "C:/Users/Bob/Documents/ProjectBA/Data/wave1/file1a.dta", clear}\\
+If Alice wants to edit Bob's code files and run them on her own computer, she will have to first undertake the tedious task of modifying the file paths in Bob's code, since Alice does not have the directory \ctext{C:/Users/Bob/Documents/ProjectBA} on her macOS computer. For example, she will have to replace the above example line of code with the following:\\
+\ctext{use "/Users/alice/Desktop/projAB/Data/wave1/file1a.dta", clear}\\
+Moreover, if another person acquires the dataset and wants to check Alice and Bob's code, that third party will have to further modify Alice's paths to be able to run the project's code. To avoid such problems, Alice and Bob could set up an ``environment variable,'' say \ctext{projectab}, on their computers and use it in their code files to refer to the project's directory containing the data. This approach would enable Alice, Bob, and the third party to be able to run the code seamlessly regardless of where the data files are located on their individual computers (as long as each of them sets up the required environment variables correctly).
+
+One can set up environment variables on Windows 10 OS by following the below instructions:
+\begin{enumerate}
+    \item Open ``Control Panel,'' select ``System and Security,'' and then select ``System.'' Then, on the left pane, select ``Advanced system settings.'' This will open ``System Properties.''
+    \item Select the ``Envrionment Variables...''~option at the bottom. Then, click on the ``New...'' option under the ``User variables'' section of the ``Environment Variables'' window.
+    \item Then, in the ``New User Variable'' dialog box, enter the ``Variable name'' (e.g., \ctext{projectab} in Bob's case) and ``Variable value'' (e.g., \ctext{C:\textbackslash Users\textbackslash Bob\textbackslash Documents\textbackslash ProjectBA} in Bob's case using a backslash \ctext{\textbackslash} rather than a forward slash \ctext{/} in the file path). Then, click on ``OK.'' Again click on ``OK'' in the ``System Properties'' interface window. This completes the setup.
+\end{enumerate}
+
+On macOS computers, one can use the \ctext{env} command or the \ctext{printenv} command to see the existing environment variables. One can set up new environment variables on macOS by following the below instructions:
+\begin{enumerate}
+    \item Open Script Editor (using Launchpad) and enter the following line into the editor:\\
+    \ctext{do shell script "launchctl setenv [NAME] [PATH]"}\\
+    where \ctext{[NAME]} and \ctext{[PATH]} should be replaced with the environment variable name and the corresponding folder path, respectively. For example, Alice could set up the environment variable \ctext{projectab} by entering the following line into the editor:\\
+    \ctext{do shell script "launchctl setenv projectab /Users/alice/Desktop/projAB"}\\
+    If other environment variables need to be set up, a new line (using the same syntax) should be used in the editor for each of them.
+    \item Then, save the script as ``Environments'' (or any other name, since the file name per se does not matter) on Desktop or any other easily accessible location. When saving, make sure to select ``Application'' in the drop-down list next to ``File Format.''
+    \item In the upper left corner, click on the Apple icon and choose ``System Preferences.'' Select ``Users \& Groups'' and then your user account. Next, click on ``Login Items'' at the top of the window and add the saved ``Environemnts'' script to ``Login Items.''
+    \item To apply changes, restart your computer. Check that the environment variable(s) work(s) by opening Terminal and using the command \ctext{env} or \ctext{printenv}.
+\end{enumerate}
+
+After completing the setup of environment variable(s), which in Alice and Bob's case is called \ctext{projectab}, it is possible to write reproducible code that can run on any computer containing the required directories (e.g., data folders) that are connected to the correct common environment variable(s). For example, the following Stata code would produce the same result on the computers of both Alice and Bob:\\
+\ctext{global projectab: env projectab}\\
+\ctext{use \$projectab/Data/wave1/file1a.dta, clear}\\
+In the above code, the name of the global need not be the same as that of the environment variable. For example, the below code produces the same result as the above code:\\
+\ctext{global pab\_dir: env projectab}\\
+\ctext{use \$pab\_dir/Data/wave1/file1a.dta, clear}\\
+Similarly, R code achieving the same result is as follows:\\
+\ctext{library(haven)}\\
+\ctext{pab\_dir $<$- Sys.getenv("projectab")}\\
+\ctext{file1a\_data $<$- read\_dta(file = file.path(pab\_dir,"Data/wave1/file1a.dta"))}
+Using environment variables is of course only one of the many steps involved in writing reproducible code. The following sections use a fully worked example to provide many more guidelines.
+
+
+\section{A Worked Example of Project Workflow for Supplemental Analysis of a Microfinance Experiment in India}
+
+
+Henceforth this guide uses a fully worked example to illustrate project workflow for conducting supplemental analysis of a publicly available dataset. The data used for this worked example comes from a field experiment conducted by Erica Field, Rohini Pande, John Papp, and Natalia Rigol. To understand whether increasing repayment flexibility in microfinance contracts can promote entrepreneurship among the poor, \cite{field2013does} collaborated with an Indian microfinance institution called Village Financial Services (VFS). In 2007, they recruited 169 five-member groups of women from low-income regions of Kolkata, India. Before assigning the groups/clusters to experimental conditions, each of the 845 clients was approved to receive an individual-liability loan that varied in size from 4000 INR to 10,000 INR. Before the loans were disbursed, the clusters were randomized into two repayment schedules: regular contract and grace-period contract.
+
+\begin{table}[ht]
+\begin{center}
+\caption*{\textit{\textbf{Number of control and treatment clusters within each stratum}}}
+\label{table:contingency_table_cell_sizes}
+\footnotesize
+\setstretch{1.5}
+\begin{tabular}{c|ccccccccc|c} \hline\hline
+Stratum & 1  & 2  & 3  & 4  & 5  & 6  & 7  & 8  & 9 & Total \\\hline
+Control clusters & 10 & 12 & 10 & 9  & 8  & 11 & 10 & 10 & 5 & 85 \\
+Treatment clusters & 10 & 8  & 10 & 11 & 12 & 9  & 10 & 10 & 4 & 84 \\ \hline
+All clusters & 20 & 20 & 20 & 20 & 20 & 20 & 20 & 20 & 9 & 169 \\ \hline\hline
+\end{tabular}
+
+\vspace{2mm}
+\textit{Note}: Each cluster consists of 5 women, so the total sample size is 845.
+\end{center}
+\end{table}
+\vspace{-5mm}
+
+As shown in the above contingency table, the field experiment has a completely randomized design within each of the nine strata. The control clusters, which were assigned the regular contract, had to initiate repayment two weeks after loan receipt as usual in the classic microfinance model. The treatment clusters, which received the grace-period contract, were given a two-month grace period before repayment commenced. There was no attrition of clients between randomization and loan disbursement. Then, over the next three years, \cite{field2013does} collected rich administrative and survey data on the clients, including information on their investment behavior, household income, microenterprise profit and assets, repayment behavior, and business practices. For each outcome, the parameter of interest is the average treatment effect (ATE), which has a population version $\vartheta = \mathbb{E}[Y^1_{ck} - Y^0_{ck}]$ as well as a finite-sample version $\tau$, which is given by
+$$\tau \equiv \frac{1}{5n}\sum_{c = 1}^n \sum_{k = 1}^5 Y^1_{ck} - Y^0_{ck},$$
+where $Y^1_{ck}$ and $Y^0_{ck}$ denote the potential outcomes for the $k$-th client in cluster $c$ under the grace-period and regular contracts, respectively, and $n = 169$ is the number of experimental clusters. Since all units within each cluster receive the same treatment, the observed outcome of the $k$-th client in cluster $c$ is $$Y_{ck} = D_c\,Y^1_{ck} + (1 - D_c)\,Y^0_{ck},$$ where $D_c$ is a binary indicator of whether cluster $c$ was randomly assigned the grace-period contract. \cite{field2013does} make inferences about the ATE by estimating the parameters (and the associated clustered standard errors) of following equation:
+$$Y_{ck} = \beta\,D_c + \eta_{S_c} + \gamma\,W_{ck} + \epsilon_{ck},$$
+where: $S_c \in \{1,\dots,9\}$ is a categorical variable indicating the stratum of cluster $c$; $\eta_{s}$ denotes fixed effect for stratum $s \in \{1,\dots,9\}$; $W_{ck}$ is a vector of baseline characteristics for client $k$ in cluster $c$; and $\epsilon_{ck}$ is her idiosyncratic error term in the equation. See \cite{field2013does} for the list of covariates that comprise the vector $W_{ck}$. When most or all elements of $\gamma$ are restricted to be zero, $\beta$ can be estimated using a simple ordinary least squares (\textit{simple OLS}) estimator $\widehat{\delta}$. Otherwise $\beta$ can be estimated using an \textit{adjusted OLS} estimator $\widehat{\theta}$ that controls for the baseline covariates $W_{ck}$. Given the experimental design, both $\widehat{\delta}$ and $\widehat{\theta}$ are good estimators of the ATE. In addition to these main estimators used by \cite{field2013does}, it is also possible to construct a supplemental estimator by incorporating propensity scores so that it becomes robust to misspecification of the regression equation. The augmented inverse probability weighting (\textit{augmented IPW}) estimator $\widehat{\tau}$, which is given later below, achives such double robustness. \cite{ding2018causal}, \cite{athey2017estimating}, and \cite{lunceford2004stratification} provide useful surveys on this topic. Before constructing $\widehat{\tau}$, it is useful to recognize that
+$$\tau \equiv \frac{1}{5n}\sum_{c = 1}^n \sum_{k = 1}^5 Y^1_{ck} - Y^0_{ck} = \frac{1}{n}\sum_{c = 1}^n\left(\frac{1}{5}\sum_{k = 1}^5 Y^1_{ck} - Y^0_{ck}\right) = \frac{1}{n} \sum_{c = 1}^n \bar{Y}^1_c - \bar{Y}^0_c,$$
+where $\bar{Y}^d_c = \frac{1}{5} \sum_{k = 1}^5 Y^d_{ck}$ for all $d \in \{0,1\}$ and $c \in \{1, \dots, n\}$. Thus, individual-level data are not necessary for estimating the ATE in a double robust manner. It suffices to have the cluster-level data $(\bar{Y}_c, D_c, S_c, \bar{X}_c)_{c = 1}^n$, where $\bar{Y}_c = D_c\,\bar{Y}^1_c + (1 - D_c)\,\bar{Y}^0_c$, $\bar{X}_c = \frac{1}{5}\sum_{k = 1}^5 X_{ck}$, and $X_{ck}$ is a vector containing one (the number) and the following baseline covariates: age, marital status, religion indicator, household size, years of education, loan amount, indicators of financial control, any household shock, business ownership, home ownership, and any drain in the neighborhood, as well as dummy variables for strata, for loan officers, and for loan amounts (in four bins). Since $(\bar{Y}^1_c,\bar{Y}^0_c) \indep D_c \mid S_c$ because of the experimental design, the following augmented IPW estimator $\widehat{\tau}$ incorporating the propensity score $\hat{\varphi}_c =\big(\sum_{l = 1}^n 1\{S_l = S_c\}\,D_l\big)/\big(\sum_{l = 1}^n 1\{S_l = S_c\}\big)$ is a valid, double robust estimator of ATE \citep{athey2017estimating, ding2018causal, lunceford2004stratification}:
+$$\widehat{\tau} = \frac{1}{n}\sum_{c = 1}^n \widehat{\tau}_c \equiv \frac{1}{n}\sum_{c = 1}^n \Big\{\big[\hat{Y}^1_c + D_c\,\big(\bar{Y}_c - \hat{Y}^1_c\big)/\hat{\varphi}_c\big] -\big[\hat{Y}^0_c + (1-D_c)\,\big(\bar{Y}_c - \hat{Y}^0_c\big)/(1 - \hat{\varphi}_c)\big]\Big\},$$
+%$$\widehat{\tau} = \frac{1}{n}\sum_{c = 1}^n \widehat{\tau}_c \equiv \frac{1}{n}\sum_{c = 1}^n \left[\hat{Y}^1_c + \frac{D_c}{\hat{\varphi}_c}\big(\bar{Y}_c - \hat{Y}^1_c\big)\right] -\left[\hat{Y}^0_c + \frac{1 - D_c}{1 - \hat{\varphi}_c}\big(\bar{Y}_c - \hat{Y}^0_c\big)\right],$$
+where $\hat{Y}^d_c$ is based on a regression model for $d \in \{0,1\}$: $\hat{Y}^d_c = \bar{X}'_c\big(\sum_{l: D_l = d} \bar{X}_l\bar{X}'_l\big)^{-1}\big(\sum_{l: D_l = d} \bar{X}_l\bar{Y}_l\big)$. For hypothesis testing purposes, the estimate $\widehat{\tau}$ can be studentized as $\widehat{\xi}_\tau = \widehat{\tau}/\widehat{\sigma}_\tau$ using an empirical sandwich method-based standard error $\widehat{\sigma}_\tau = \sqrt{n^{-2}\sum_{c = 1}^n (\widehat{\tau}_c - \widehat{\tau})^2}$, which seems to work well in practice \citep{lunceford2004stratification}.
+
+To make inferences regarding average treatment effects on outcomes, \cite{field2013does} report cluster-robust standard errors (for ATE estimates) using asymptotic formulas. This information can be supplemented by other measures of statistical uncertainty. The stratified and completely randomized nature of the experimental design enables alternative modes of inference using the block bootstrap procedure and various types of randomization tests, which have finite-sample validity in this setting. There are nine strata and two experimental conditions (i.e., regular and grace-period contracts), and so there are 18 blocks in total, as shown in the contingency table at beginning of this section. To conduct the block bootstrap procedure, one can use simulation methods to resample clusters with replacement but within each of the 18 blocks. The bootstrap standard errors $\widetilde{\sigma}_\delta$, $\widetilde{\sigma}_\theta$, and $\widetilde{\sigma}_\tau$ associated respectively with the ATE estimates $\widehat{\delta}$, $\widehat{\theta}$, and $\widehat{\tau}$ can be obtained by computing the standard deviations of the corresponding bootstrap distributions, which can be obtained by applying the estimators to simulated block bootstrap-based resamples of the original data.
+
+It is possible to use randomization inference for conducting an exact test of the sharp null hypothesis that $\tau_c \equiv \bar{Y}^1_c - \bar{Y}^0_c = 0 \,\,\forall c$. To do this, one can generate $M$ simulations $(D^{*}_m)_{m = 1}^M \equiv ((D^{*}_{m,c})_{c = 1}^n)_{m = 1}^M$ of the treatment indicator vector (containing binary treatment indicators for the $n$ clusters) using the random assignment mechanism used in the experiment (i.e., complete randomization within each of the nine strata). Because of the experimental design, the contingency table (showing the number of control and treatment clusters within each stratum) remains invariant under all of these simulated treatment status vectors $(D^{*}_m)_{m = 1}^M$. For each simulation $m \in \{1, \dots, M\}$ under the sharp null hypothesis, one can apply the above ATE estimators to $(\bar{Y}_c, D^{*}_{m,c}, S_c, \bar{X}_c)_{c = 1}^n$ and obtain $\widehat{\delta}^*_m$, $\widehat{\theta}^*_m$, $\widehat{\tau}^*_m$, and $\widehat{\xi}^*_m$, which are the simulated counterparts of $\widehat{\delta}$, $\widehat{\theta}$, $\widehat{\tau}$, and $\widehat{\xi}$, respectively. The exact $p$-values for these test statistics are given by $\tilde{p}^\circ_\delta = (1 + \sum_{m = 1}^M 1\{|\,\widehat{\delta}^*_m\,| \geq |\,\widehat{\delta}\,|\})/(1 + M)$, $\tilde{p}^\circ_\theta = (1 + \sum_{m = 1}^M 1\{|\,\widehat{\theta}^*_m\,| \geq |\,\widehat{\theta}\,|\})/(1 + M)$, $\tilde{p}^\circ_\tau = (1 + \sum_{m = 1}^M 1\{|\,\widehat{\tau}^*_m\,| \geq |\,\widehat{\tau}\,|\})/(1 + M)$, which are all nonstudentized test-based exact single $p$-values, and $\tilde{q}^\circ_\tau = (1 + \sum_{m = 1}^M 1\{|\,\widehat{\xi}^*_m\,| \geq |\,\widehat{\xi}\,|\})/(1 + M)$, which is a studentized test-based exact single $p$-value. If there is no heterogeneity in cluster-level treatment effects $(\tau_c)_{c = 1}^n$, the sharp null hypothesis is equivalent to the weak null hypothesis that $\tau = 0$. In this case, $\tilde{p}^\circ_\delta$, $\tilde{q}^\circ_\theta$, $\tilde{p}^\circ_\tau$, and $\tilde{q}^\circ_\tau$ would all be valid as exact $p$-values for testing $\tau = 0$. However, if there is heterogeneity in cluster-level treatment effects $(\tau_c)_{c = 1}^n$, the former three $p$-values may not have good properties even asymptotically for testing $\tau = 0$. In this case, it is preferable to use the studentized test-based $p$-value $\tilde{q}^\circ_\tau$ rather than the nonstudentized test-based $p$-values $\tilde{p}^\circ_\delta$, $\tilde{q}^\circ_\theta$, and $\tilde{p}^\circ_\tau$ \citep[see, e.g., ][]{wu2020randomization}.
+
+Tables 1 through 4 of \cite{field2013does} report on the impact of grace period on various blocks or categories of (three or four) outcomes, such as investment behavior, household income, microenterprise profit and assets, repayment behavior, and business practices. The aforementioned supplemental statistics related to these blocks of outcomes can be presented in two tables. Let $\widehat{\alpha}_{i.j}$ represent the sample mean of control clusters for outcome $j$ in block or category $i$. Let $\widehat{\delta}_{i.j}$, $\widehat{\theta}_{i.j}$, and $\widehat{\tau}_{i.j}$ be the ATE estimates using the simple OLS, adjusted OLS, and augmented IPW estimators, respectively. In addition, let $\widetilde{\sigma}_{\delta,\,i.j}$, $\widetilde{\sigma}_{\theta,\,i.j}$, $\widetilde{\sigma}_{\tau,\,i.j}$ be their bootstrap standard errors, and $\tilde{p}^\circ_{\delta,\,i.j}$, $\tilde{p}^\circ_{\theta,\,i.j}$, $\tilde{p}^\circ_{\tau,\,i.j}$ be the nonstudentized randomization test-based exact single $p$-values. All of these statistics can be reported in a single table as follows, enabling evaluation of robustness of the results to various estimation and inference choices.
+
+\begin{table}[!ht]
+\begin{center}
+\caption*{\textbf{\textit{Desired format for table on impact of grace period on business activity and repayment outcomes}}}
+\label{table:table_format_single_pvals}
+\footnotesize
+\setstretch{1.5}
+\begin{tabular}{l|c@{\hskip 10pt}|c@{\hskip 10pt}|c@{\hskip 10pt}|c}
+\hline\hline
+ & \textit{Control} & \textit{Simple OLS} & \textit{Adjusted OLS} & \textit{Augmented IPW} \\ [-1mm]
+ \textit{Outcome} & \textit{mean} & \textit{estimate of ATE} & \textit{estimate of ATE} & \textit{estimate of ATE} \\ \hline \hline
+ $ (i.j) $ Outcome label & $ \widehat{\alpha}_{i.j} $  & $ \widehat{\delta}_{i.j} \;\; ( \widetilde{\sigma}_{\delta,\,i.j} ) $  & $ \widehat{\theta}_{i.j} \;\; ( \widetilde{\sigma}_{\theta,\,i.j} ) $  & $ \widehat{\tau}_{i.j} \;\; ( \widetilde{\sigma}_{\tau,\,i.j} ) $ \\ [-1mm]
+ &  & $ [\tilde{p}^\circ_{\delta,\,i.j}] $ & $ [\tilde{p}^\circ_{\theta,\,i.j}] $ & $ [\tilde{p}^\circ_{\tau,\,i.j}] $ \\ \hline\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+In a table with the above format, the outcomes are treated as separate. However, it is also useful to simultaneously make inferences about the multiple outcomes within each block or category. As discussed before, the following studentized test-based exact single $p$-value for outcome $j$ in block $i$ is not adjusted for multiple testing: $\tilde{q}^\circ_{\tau,\,i.j} = (1 + \sum_{m = 1}^M 1\{|\,\widehat{\xi}^*_{m,\,i.j}\,| \geq |\,\widehat{\xi}_{i.j}\,|\})/(1 + M)$, where $(\widehat{\xi}^*_{m,\,i.j})_{m = 1}^M$ and $\widehat{\xi}_{i.j}$ are versions of $(\widehat{\xi}^*_{m})_{m = 1}^M$ and $\widehat{\xi}$ specific to outcome $j$ in block $i$. This issue can be addressed by using the stepdown procedure suggested by \cite{romano2005exact, romano2016efficient}. Applying their procedure results in stepdown $p$-values $\tilde{q}^\star_{\tau,\,i.j}$. These account for multiple testing within each block of outcomes and can be presented along with single $p$-values (for the estimate $\widehat{\tau}_{i.j}$) as follows.
+
+\begin{table}[!ht]
+\begin{center}
+\caption*{\textbf{\textit{Desired table format for stepdown inference on impacts of grace period for microfinance loans}}}
+\label{table:table_format_stepdown_pvals}
+\footnotesize
+\setstretch{1.5}
+\begin{tabular}{l|cc|ccc}
+\hline\hline
+ &  &  & \textit{Nonstudentized}  & \textit{Studentized} & \textit{Studentized}  \\ [-1mm]
+ & \textit{Control} & \textit{Augmented IPW} & \textit{test-based exact} & \textit{test-based exact} & \textit{test-based exact}  \\ [-1mm]
+ \textit{Outcome} & \textit{mean} & \textit{estimate of ATE} & \textit{single $ p$-value} & \textit{single $ p$-value} & \textit{stepdown $ p$-value}  \\ \hline 
+ $ (i.j) $ Outcome label & $  \widehat{\alpha}_{i.j} $ & $ \widehat{\tau}_{i.j} $ & $ \tilde{p}^\circ_{\tau,\,i.j} $ & $ \tilde{q}^\circ_{\tau,\,i.j} $ & $ \tilde{q}^\star_{\tau,\,i.j} $ \\ \hline \hline
+\end{tabular}
+\end{center}
+\end{table}
+
+The computationally efficient algorithm proposed by \cite{romano2005exact, romano2016efficient} for computing stepdown $p$-values $\tilde{q}^\star_{\tau,\,i.j}$ proceeds as follows. Within block $i$ of outcomes $j \in \{1, \dots, S\}$, let $\{r_1,\dots,r_S\}$ be a reordering of $\{1, \dots, S\}$ such that $|\,\widehat{\xi}_{i.r_1}\,| \geq |\,\widehat{\xi}_{i.r_2}\,| \geq  \dots \geq |\,\widehat{\xi}_{i.r_S}\,|$ is satisfied. Then, let $\upsilon^*_{m,\,i.j} = \max\{|\,\widehat{\xi}^*_{m,\,i.r_j}\,|,\cdots,|\,\widehat{\xi}^*_{m,\,i.r_S}\,|\}$ for $j \in \{1,\dots,S\}$ and $m \in \{1,\dots,M\}$, and let the initial versions of stepdown $p$-values be given by $\tilde{q}'_{\tau,\,i.j} = (1 + \sum_{m = 1}^M 1\{\upsilon^*_{m,\,i.j} \geq |\,\widehat{\xi}_{i.j}\,|\})/(1 + M)$; these may not necessarily be monotonic according to the ordering $\{r_1,\dots,r_S\}$, and so a further adjustment is needed. The final stepdown $p$-values are given by $\tilde{q}^\star_{\tau,\,i.r_1} = \tilde{q}'_{\tau,\,i.r_1}$ and $\tilde{q}^\star_{\tau,\,i.r_s} = \max\{\tilde{q}'_{\tau,\,i.r_s}, \tilde{q}^\star_{\tau,\,i.r_{s - 1}}\}$ for $s\in \{2,\dots,S\}$.
+
+The problem at hand is to create the above two desired tables (as TeX files) in the specified format. The goal of this worked example, which assumes that the reader has at least some basic knowledge of R or Stata, is to solve the problem using only a single run of the main (or master) code file. To this end, it is useful to organize the project folder as follows.
+\vspace{2mm}
+
+\begin{center}
+\begin{tabular}{ll}
+Project folder's subfolders: & File structure of \texttt{scripts} subfolder: \\[-5mm]\\
+\begin{minipage}{6cm}\dirtree{%
+.1 ...
+.2 scripts.
+.3 programs.
+.3 simulations.
+.3 outputs.
+.2 store.
+.2 tables.
+.2 drafts.
+.2 .git.
+}\end{minipage}    
+& \begin{minipage}{8cm}\dirtree{%
+.1 ../scripts.
+.2 master.\char`{do,R\char`}.
+.2 programs.
+.3 aipw\char`_strata.\char`{do,R\char`}.
+.3 stepdown\char`_pval.\char`{do,R\char`}.
+.2 simulations.
+.3 outcomes.\char`{do,R\char`}.
+.3 ate\char`_estimators.\char`{do,R\char`}.
+.3 observed\char`_estimates.\char`{do,R\char`}.
+.3 bootstrap\char`_dist.\char`{do,R\char`}.
+.3 randomization\char`_dist.\char`{do,R\char`}.
+.2 outputs.
+.3 appended\char`_results.\char`{do,R\char`}.
+.3 table\char`_single\char`_pvals.\char`{do,R\char`}.
+.3 table\char`_stepdown\char`_pvals.\char`{do,R\char`}.
+}\end{minipage}\\
+\end{tabular}
+\end{center}
+\vspace{4mm}
+
+There are four main subfolders in the project folder: \texttt{scripts}, \texttt{store}, \texttt{tables}, and \texttt{drafts}. The \texttt{scripts} subfolder contains code files for producing the tables. The role of the subfolder \texttt{store} is to act as a reserve for any intermediate outputs, which are created and then later accessed as needed by a sequence of code files. The subfolder \texttt{tables} is where a single run of the code generates and saves the TeX files containing customized tables in desired formats. These \texttt{.tex} tables are then integrated into the manuscript files stored in the \texttt{drafts} subfolder.
+
+The \texttt{scripts} subfolder is further organized into these folders: \texttt{programs}, \texttt{simulations}, and \texttt{outputs}. The folder \texttt{programs} contains the following general-purpose programs (in Stata do-files and R source files): \texttt{aipw\_strata}, which implements the augmented IPW estimator, and \texttt{stepdown\_pval}, which generates stepdown $p$-values for specified blocks of outcomes. The \texttt{simulations} folder contains several interconnected files: \texttt{outcomes}, which specifies the outcomes for analysis; \texttt{ate\_estimators}, which is a project-specific program that takes the dataset as input and computes the simple OLS, adjusted OLS, and augmented IPW estimates of ATE for the specified outcomes; \texttt{observed\_estimates} applies the \texttt{ate\_estimators} program to the original experimental dataset; \texttt{bootstrap\_dist} generates block bootstrap-based resamples of the original dataset and then applies the \texttt{ate\_estimators} program to the bootstrapped datasets; and \texttt{randomization\_dist} simulates random assignment of treatment using the experimental design and then applies the \texttt{ate\_estimators} program to the simulated datasets, which do not modify the observed outcomes and baseline variables but replace the original treatment assignment variable with the simulated vector of treatment indicators. Using these observed estimates and resampled estimates generated in the \texttt{store} folder, the code files in the \texttt{scripts/outputs} folder finish the task at hand. Specifically, \texttt{appended\_results} uses the stored estimates (both observed and resampled ones) to compute the needed statistics. Then, the code files \texttt{table\_single\_pvals} and \texttt{table\_stepdown\_pvals} generate and save (in the \texttt{tables} folder) the TeX files containing the formatted tables. At a single click, running \texttt{master.do} or \texttt{master.R}, which sequentially run all of the code files, will produce the following tables in TeX format in \texttt{tables} folder: \texttt{tables\_single\_pvals\_\{stata,r\}.tex} and \texttt{tables\_stepdown\_pvals\_\{stata,r\}.tex}.
+
+
+\vspace{5mm}
+
+\lstset{basicstyle=\scriptsize\ttfamily,breaklines=true}
+\lstset{frame=lines,backgroundcolor=\color{gray!20}}
+
+\noindent \texttt{master.do}
+\lstinputlisting{../scripts/master.do}
+
+
+\lstset{basicstyle=\scriptsize\ttfamily,breaklines=true}
+\lstset{frame=lines,backgroundcolor=\color{orange!20}}
+
+\noindent \texttt{master.R}
+\lstinputlisting{../scripts/master.R}
+
+
+\clearpage
+
+
+\section{Writing Customized Statistical Programs}
+
+This section provides some examples and basic guidelines for writing customized statistical programs in R and Stata. As mentioned in the previous section, the project folder is organized such that general-purpose programs are stored in \texttt{../scripts/programs}. The Stata do-file \texttt{aipw\_strata.do} and the R source file \texttt{aipw\_strata.R} define programs for implementing the augmented IPW estimator discussed earlier: 
+$$\widehat{\tau} = \frac{1}{n}\sum_{c = 1}^n \widehat{\tau}_c \equiv \frac{1}{n}\sum_{c = 1}^n \Big\{\big[\hat{Y}^1_c + D_c\,\big(\bar{Y}_c - \hat{Y}^1_c\big)/\hat{\varphi}_c\big] -\big[\hat{Y}^0_c + (1-D_c)\,\big(\bar{Y}_c - \hat{Y}^0_c\big)/(1 - \hat{\varphi}_c)\big]\Big\},$$
+%$$\widehat{\tau} = \frac{1}{n}\sum_{c = 1}^n \widehat{\tau}_c \equiv \frac{1}{n}\sum_{c = 1}^n \left[\hat{Y}^1_c + \frac{D_c}{\hat{\varphi}_c}\big(\bar{Y}_c - \hat{Y}^1_c\big)\right] -\left[\hat{Y}^0_c + \frac{1 - D_c}{1 - \hat{\varphi}_c}\big(\bar{Y}_c - \hat{Y}^0_c\big)\right],$$
+where $\hat{\varphi}_c =\big(\sum_{l = 1}^n 1\{S_l = S_c\}\,D_l\big)/\big(\sum_{l = 1}^n 1\{S_l = S_c\}\big)$ and $\hat{Y}^d_c$ is based on a regression model for $d \in \{0,1\}$: $\hat{Y}^d_c = \bar{X}'_c\big(\sum_{l: D_l = d} \bar{X}_l\bar{X}'_l\big)^{-1}\big(\sum_{l: D_l = d} \bar{X}_l\bar{Y}_l\big)$. The estimate's empirical sandwich method-based standard error is given by $\widehat{\sigma}_\tau = \sqrt{n^{-2}\sum_{c = 1}^n (\widehat{\tau}_c - \widehat{\tau})^2}$. The following code in the do-file \texttt{aipw\_strata.do} defines a command in Stata for computing the estimator and its standard error. Its R counterpart \ref{code:aipw_strata.R} is provided in the \hyperref[sec:appendix]{Appendix}.
+
+In Stata, customized programs are usually written using the \ctext{program} syntax. (Stata also has its own programming language called Mata. See \href{https://www.stata.com/manuals/m.pdf}{\texttt{https://www.stata.com/manuals/m.pdf}}.) When user-written programs are stored as \texttt{.ado} files in the appropriate location (i.e., a directory where Stata automatically searches for programs), they can be used just like other commands such as \texttt{summarize} or \texttt{regress}. Alternatively, for project-specific purposes, they can be written in an ordinary do-file, such as \texttt{aipw\_strata.do}, and can be manually loaded as necessary.
+
+The program begins with the line \ctext{program aipw\_strata, rclass} and ends simply with the word \ctext{end}. The \ctext{rclass} option allows for storage of the desired results $\widehat{\tau}$ (the augmented IPW estimate) and $\widetilde{\sigma}_\tau$ (its standard error) in \ctext{r(aipw\_strata\_est)} and \ctext{r(aipw\_strata\_se)}, respectively. As discussed in \href{https://www.stata.com/manuals/pprogram.pdf}{\texttt{https://www.stata.com/manuals/pprogram.pdf}}, there are alternatives to the \ctext{rclass} option. The syntax for the program \ctext{aipw\_strata} involves four input strings. The first string, which is stored in the \ctext{local} variable \ctext{yvar}, should be the name of the outcome variable in the dataset. The strings specifying the binary treatment variable and categorical strata variable are stored in \ctext{local} variables \ctext{tvar} and \ctext{svar}, respectively, while the baseline covariates are stored in \ctext{xvars}. These \ctext{local} variables are internal to the program, as opposed to \ctext{global} variables, which remain operational throughout a Stata session. The macros \ctext{local} and \ctext{global} are explained more at \href{https://www.stata.com/manuals13/u18.pdf#u18ProgrammingStata}{\texttt{https://www.stata.com/manuals13/u18.pdf\#u18ProgrammingStata}}.
+
+The program \ctext{aipw\_strata} first creates strata-based propensity scores and then generates predicted values from regressions for treated and untreated units in a completely randomized stratified experiment. Using these quantities, the augmented IPW estimate $\widehat{\tau}$ and its standard error $\widetilde{\sigma}_\tau$ are computed according the above formulas are returned as outputs after the command is executed.
+
+
+\lstset{basicstyle=\scriptsize\ttfamily,breaklines=true}
+\lstset{frame=lines,backgroundcolor=\color{gray!20}}
+
+\noindent \textit{begin}\quad \texttt{aipw\_strata.do}
+\lstinputlisting{../scripts/programs/aipw_strata.do}
+\vspace{-3mm}
+\noindent \textit{end}\quad \texttt{aipw\_strata.do}
+
+\vspace{5mm}
+
+The \texttt{../scripts/programs} folder also contains a set of general-purpose programs (in the Stata do-file \texttt{stepdown\_pval.do} and the R source file \texttt{stepdown\_pval.R}) for computing stepdown $p$-values that are adjusted for multiple testing. As mentioned earlier, the computationally efficient algorithm proposed by \cite{romano2005exact, romano2016efficient} for computing stepdown $p$-values $\tilde{q}^\star_{\tau,\,i.j}$ proceeds as follows. Within block $i$ of outcomes $j \in \{1, \dots, S\}$, let $\{r_1,\dots,r_S\}$ be a reordering of $\{1, \dots, S\}$ such that $|\,\widehat{\xi}_{i.r_1}\,| \geq |\,\widehat{\xi}_{i.r_2}\,| \geq  \dots \geq |\,\widehat{\xi}_{i.r_S}\,|$ is satisfied. Then, let $\upsilon^*_{m,\,i.j} = \max\{|\,\widehat{\xi}^*_{m,\,i.r_j}\,|,\cdots,|\,\widehat{\xi}^*_{m,\,i.r_S}\,|\}$ for $j \in \{1,\dots,S\}$ and $m \in \{1,\dots,M\}$. Furthermore, let the initial versions of stepdown $p$-values be given by $\tilde{q}'_{\tau,\,i.j} = (1 + \sum_{m = 1}^M 1\{\upsilon^*_{m,\,i.j} \geq |\,\widehat{\xi}_{i.j}\,|\})/(1 + M)$; these may not necessarily be monotonic according to the ordering $\{r_1,\dots,r_S\}$, and so a further adjustment is needed. The final stepdown $p$-values are given by $\tilde{q}^\star_{\tau,\,i.r_1} = \tilde{q}'_{\tau,\,i.r_1}$ and $\tilde{q}^\star_{\tau,\,i.r_s} = \max\{\tilde{q}'_{\tau,\,i.r_s}, \tilde{q}^\star_{\tau,\,i.r_{s - 1}}\}$ for $s\in \{2,\dots,S\}$. The following code in the R script \texttt{stepdown\_pval.R} defines a function in R for computing the stepdown $p$-values using the supplied null distributions of test statistics for specified outcomes. Its Stata counterpart \ref{code:stepdown_pval.do}, which is much longer and relatively inefficient, is provided in the \hyperref[sec:appendix]{Appendix}. The function \ctext{stepdown\_pval} defined in the following R code \texttt{stepdown\_pval.R} takes two inputs: a data frame containing the simulated null distributions of test statistics for a specified block of outcomes; and the corresponding vector of observed test statistics. The function then applies the above algorithm and outputs the stepdown $p$-values.
+
+\vspace{5mm}
+
+\lstset{basicstyle=\scriptsize\ttfamily,breaklines=true}
+\lstset{frame=lines,backgroundcolor=\color{orange!20}}
+
+\noindent \textit{begin}\quad \texttt{stepdown\_pval.R}
+\lstinputlisting{../scripts/programs/stepdown_pval.R}
+\vspace{-3mm}
+\noindent \textit{end}\quad \texttt{stepdown\_pval.R}
+
+\vspace{5mm}
+
+In fact, stepdown $p$-values are not the only results that the function \ctext{stepdown\_pval} produces. It also returns a data frame containing the adjusted null distributions that are used for stepdown multiple testing. Upon applying the \ctext{stepdown\_pval} function to the appropriate inputs, it returns both the outputs in the form of a \ctext{list}, which is a R object that contains elements of different types, such as a number, vector, string, data frame, or even another nested list. This aspect of R can be more convenient relative to Stata in some contexts. The $l$-th element of a list, say \ctext{example\_list}, can be retrieved using the syntax \ctext{example\_list[[l]]}.
+
+As can be seen in the previous code, the \ctext{stepdown\_pval} makes use of several \ctext{for} loops. Its usual syntax starts with the form \ctext{for (j in 1:S) \{}, where \ctext{j} should be replaced with the desired notation for the index and \ctext{1:S} should be replaced with the appropriate vector. The loop should be closed with \ctext{\}} after specifying the operation inside the loop. In Stata, there are two types of for-loops in which the index is a \ctext{local}: count-controlled loops, e.g., \ctext{forval j = 1/10 \{ \}} or \ctext{forval j = 1(2)10 \{\}}; and collection-controlled loops, e.g., \ctext{foreach var in `varlist' \{ \}}, where \ctext{var} is the index and \ctext{varlist} is a \ctext{local} macro containing a list of items intended for iteration in the loop. Stata and R also accommodate \ctext{while} loops with a similar syntax as follows: \ctext{while (} logical condition \ctext{) \{} expression \ctext{\}}. In R, after initializing \ctext{i <- 0}, the following example prints the numbers 1 through 5: \ctext{while (i <= 4) \{i <- i + 1; print(i)\}}. In Stata, after initializing \ctext{local i = 0}, the same output can be achieved using the condition \ctext{(`i' <= 4)} and the following two lines of expressions: \ctext{local i = `i' + 1} and \ctext{display `i'}. Stata and R also support conditional expressions such as if-else statements: \ctext{if (} logical condition \ctext{) \{} statements \ctext{\}} followed (optionally) by \ctext{else \{} statements \ctext{\}}.
+
+While the folder \texttt{../scripts/programs} contains general-purpose programs \ctext{aipw\_strata} and \ctext{stepdown\_pval}, the folder \texttt{../scripts/simulations} contains project-specific programs for computing the ATE estimators as well as their sampling and null distributions.
+
+\vspace{5mm}
+
+\lstset{basicstyle=\scriptsize\ttfamily,breaklines=true}
+\lstset{frame=lines,backgroundcolor=\color{gray!20}}
+
+\noindent \textit{begin}\quad \texttt{outcomes.do}
+\lstinputlisting{../scripts/simulations/outcomes.do}
+\vspace{-3mm}
+\noindent \textit{end}\quad \texttt{outcomes.do}
+
+\clearpage
+
+The files \texttt{outcomes.do}, shown above, and \ref{code:outcomes.R}, presented in the \hyperref[sec:appendix]{Appendix}, contain code for storing outcomes of interest for the supplemental analysis. The stored outcome variable names are based on the experimental dataset that \cite{field2013does} made publicly avaiable at \href{https://www.openicpsr.org/openicpsr/project/112672/version/V1/view?path=/openicpsr/112672/fcr:versions/V1/Publication-Data-and-Do-Files/Grace-Period-Data.dta&type=file}{\texttt{https://www.openicpsr.org/openicpsr/project/112672/version/V1/view?path=\\/openicpsr/112672/fcr:versions/V1/Publication-Data-and-Do-Files/Grace-\\Period-Data.dta\&type=file}}. The Stata do-file shown above uses \ctext{global} macros to store these outcome names, while the R source file uses a vector of strings as usual. These are then fed into the project-specific programs \texttt{ate\_estimators.do}, shown below, and \ref{code:ate_estimators.R}, given in the \hyperref[sec:appendix]{Appendix}. The general-purpose program \ctext{aipw\_strata} is first loaded before defining the project-specific \ctext{ate\_estimators} program. Then, \ctext{for} loops are used to compute and store the three different ATE estimates as well as the control mean for each outcome of interest. This program can be applied to either the original experimental data or a simulated dataset with the same form.
+
+\vspace{5mm}
+
+\lstset{basicstyle=\scriptsize\ttfamily,breaklines=true}
+\lstset{frame=lines,backgroundcolor=\color{gray!20}}
+
+\noindent \textit{begin}\quad \texttt{ate\_estimators.do}
+\lstinputlisting{../scripts/simulations/ate_estimators.do}
+\vspace{-3mm}
+\noindent \textit{end}\quad \texttt{ate\_estimators.do}
+
+\vspace{5mm}
+
+
+Using the previous code files, it is possible to apply the \ctext{ate\_estimators} program to the original data. This is done in the R source file \texttt{observed\_estimates.R}, shown below, as well as the Stata do-file \ref{code:observed_estimates.do}, which is presented in the \hyperref[sec:appendix]{Appendix}. The code assumes that the user's computer has an environment variable called \ctext{aer\_103\_6\_2196\_data} for the folder that contains the file \ctext{Grace-Period-Data.dta}, which is publicly available for download at \href{https://www.openicpsr.org/openicpsr/project/112672/version/V1/view?path=/openicpsr/112672/fcr:versions/V1/Publication-Data-and-Do-Files/Grace-Period-Data.dta&type=file}{\texttt{https://www.openicpsr.org/openicpsr/project/112672/version/V1/view?path=\\/openicpsr/112672/fcr:versions/V1/Publication-Data-and-Do-Files/Grace-\\Period-Data.dta\&type=file}}.
+
+\vspace{5mm}
+
+\lstset{basicstyle=\scriptsize\ttfamily,breaklines=true}
+\lstset{frame=lines,backgroundcolor=\color{orange!20}}
+
+\noindent \textit{begin}\quad \texttt{observed\_estimates.R}
+\lstinputlisting{../scripts/simulations/observed_estimates.R}
+\vspace{-3mm}
+\noindent \textit{end}\quad \texttt{observed\_estimates.R}
+
+\vspace{5mm}
+
+The file \texttt{observed\_estimates.R} first loads the required packages (i.e., \ctext{dplyr} and \ctext{haven}), obtains the path for the aforementioned environment variable leading to the directory containing the data, loads the experimental dataset, and then applies the \ctext{ate\_estimators} function to that dataset, before saving (in the subfolder \texttt{../store}) the estimates of ATE obtained using the observed data. The above script specifies \ctext{file = "../../store/obs\_estimates"} to indicate the location and file name for saving the output. The reason is that \texttt{observed\_estimates.R} is located in \texttt{../scripts/simulations}, and so the syntax \ctext{../../} indicates that two levels must be moved up before reaching the \texttt{../store} subfolder, where the output can be saved with the name \texttt{obs\_estimates}.
+
+When the dataset is small in size and if it is not a restricted-access file, there is an alternative to the use of the environment variable for specifying the data directory. The dataset can be stored within the project folder in a subfolder \ctext{../data}. In this case, there is no need to set up an environment variable called \ctext{aer\_103\_6\_2196\_data}. The data can be directly read using the syntax \ctext{gpdata <- read\_dta("../../data/Grace-Period-Data.dta")}. The equivalent syntax in Stata is \ctext{use "../../data/Grace-Period-Data.dta", clear}. This approach, when feasible, avoids the burden of setting up the environment variables, making the project folder self-contained.
+
+\clearpage
+
+\section{Implementing Simulation Methods}
+
+The previously described program \ctext{ate\_estimators}, which implements three ATE estimators, can also be applied to simulated datasets that are similar in structure to the original dataset. This is useful for obtaining the bootstrap and randomization distributions of test statistics. The R code in \texttt{randomization\_dist.R} below and its Stata counterpart in \texttt{randomization\_dist.do} generate simulations of the treatment status vector according to the experimental design and then apply the ATE estimators to the simulated datasets, thereby creating approximate randomization distributions that can be used for hypothesis testing.
+
+Since the simulations need not be conducted sequentially (at least in the current setting), it is efficient to use parallel computing procedures. R is particularly well-suited for parallelization when implementing simulation methods. R supports different types of parallelization (e.g., forks and sockets); for more information, see the notes on parallel processing at a course website: \href{http://dept.stat.lsa.umich.edu/~jerrick/courses/stat701/}{\texttt{http://dept.stat.lsa.umich.edu/$\sim$jerrick/courses/stat701/}}. For additional useful information, see \href{https://www.programmingr.com}{\texttt{https://www.programmingr.com}} and \href{https://support.rstudio.com/hc/en-us/articles/201057987-Quick-list-of-useful-R-packages}{\texttt{https://support.rstudio.com/\\hc/en-us/articles/201057987-Quick-list-of-useful-R-packages}}.
+
+The R code file \texttt{randomization\_dist.R} first sets a seed to ensure reproducibility of the final output and then loads the required packages. It then starts a cluster using about three-quarters of the available processor cores so as to not overburden the computer. The code then uses the socket method for parallelization. Specifically, the function \ctext{clusterEvalQ} executes the first code block on each process. Then the code defines a function called \ctext{randomization\_test\_estimates} that generates a simulated treatment status vector and then applies the ATE estimators to the simulated dataset to obtain random draws from the randomization null distributions of the test statistics. Finally, the code uses the \ctext{pblapply} function to generate the desired simulations in a parallel fashion. (Alternatively, the function \ctext{parLapply} can also used to obtain the same output, but the advantage of \ctext{pblapply} is its ability to display progress and a real-time estimate of time needed for completion.) After the simulations are completed, the code stops the cluster and saves the simulated estimates in the file \texttt{rand\_dist} in the subfolder \texttt{../store}. 
+
+\vspace{5mm}
+
+\lstset{basicstyle=\scriptsize\ttfamily,breaklines=true}
+\lstset{frame=lines,backgroundcolor=\color{orange!20}}
+
+\noindent \textit{begin}\quad \texttt{randomization\_dist.R}
+\lstinputlisting{../scripts/simulations/randomization_dist.R}
+\vspace{-3mm}
+\noindent \textit{end}\quad \texttt{randomization\_dist.R}
+
+\vspace{7mm}
+
+An advantage of R compared to Stata is R's ability to store output in the form of lists, which are very flexible. For example, the code \texttt{randomization\_dist.R} stores five test statistics for each of 19 outcomes in a 5 by 19 matrix or data frame for each simulation. These 5 by 19 data frames are then collated in a \ctext{list} named \ctext{rand\_dist} that is saved in \texttt{../store}.
+
+The Stata counterpart of \texttt{randomization\_dist.R} is the do-file \texttt{randomization\_dist.do} shown below. Although Stata/MP automatically parallelizes some basic commands (such as linear regression), Stata's parallelization capabilities for general purposes are currently very limited. For example, Stata's built-in command \ctext{simulate} conducts simulations in a sequential fashion. One must resort to some user-written commands such as \ctext{parallel} for implementing parallelization in a limited way, as shown in the following do-file.
+
+\vspace{7mm}
+
+\lstset{basicstyle=\scriptsize\ttfamily,breaklines=true}
+\lstset{frame=lines,backgroundcolor=\color{gray!20}}
+
+\noindent \textit{begin}\quad \texttt{randomization\_dist.do}
+\lstinputlisting{../scripts/simulations/randomization_dist.do}
+\vspace{-3mm}
+\noindent \textit{end}\quad \texttt{randomization\_dist.do}
+
+\vspace{5mm}
+
+While Stata does allow users to store various kinds of simulation results in \texttt{.dta} format, this approach is relatively not as flexible as R's lists feature. Whereas R stores simulation output as a list of 2000 data frames (each of which is a 5 by 19 matrix) for the 2000 simulations, Stata stores the simulation results as a dataset of 2000 rows (i.e., one row per simulation) and 95 (i.e., 5 times 19) columns. Thus, R's approach is a bit more flexible than Stata's approach in this respect. To implement stratified block bootstrap, the R source file \ref{code:bootstrap_dist.R} and the Stata do-file \ref{code:bootstrap_dist.do}, which are provided in the \hyperref[sec:appendix]{Appendix}, adapt the previous code templates to simulate the desired bootstrap distributions.
+
+Once the original ATE estimates as well as their bootstrap and randomization distribution simulations are saved in the subfolder \texttt{../store}, they can be used to calculate the desired statistics for reporting in the final tables. The Stata do-file \texttt{appended\_results.do} shown below does this and puts the calculated statistics in the form of a dataset so that they can be retrieved easily as needed during the later step of table creation. (The R counterpart of the do-file is \ref{code:appended_results.R} and is provided in the \hyperref[sec:appendix]{Appendix}.)  The following code first collects the original ATE estimates and stores them in a temporary file, before using the simulated bootstrap distribution to compute the bootstrap standard errors (for the three ATE estimates) and storing them in another temporary file. The following statistics are also computed and stored in separate temporary files: exact $p$-values based on nonstudentized test statistics (based on simple OLS, adjusted OLS, and augmented IPW methods) as well as exact single and stepdown $p$-values based on studentized AIPW test statistic. This results in 12 temporary files for the aforementioned twelve types of statistics. These files are then appended to form a single dataset that has 19 columns (one for each outcome) and 12 rows (one for each type of statistic). This dataset, named \ctext{appended\_results}, is again stored in \texttt{../store} so that it can be used for creating customized tables.
+
+\vspace{5mm}
+
+\lstset{basicstyle=\scriptsize\ttfamily,breaklines=true}
+\lstset{frame=lines,backgroundcolor=\color{gray!20}}
+
+\noindent \textit{begin}\quad \texttt{appended\_results.do}
+\lstinputlisting{../scripts/outputs/appended_results.do}
+\vspace{-3mm}
+\noindent \textit{end}\quad \texttt{appended\_results.do}
+
+
+\section{Automating Formatted Creation of Customized Tables}
+
+In order to avoid manually making changes to both the content and the formatting of the desired tables, it is possible to automate creation of customized tables using R or Stata, ensuring reproducibility (and automatic updating) of the tables inserted in the manuscript. In Stata, one way to do this is first to retrieve and store (e.g., as \ctext{local} macros) the desired numbers from the dataset containing the appended results. Then, \ctext{for} loops (and \ctext{if}-\ctext{else} conditional statements) can be used to create desired formatting. Finally, the \ctext{file write} command (preceded by \ctext{file open} and succeeded by \ctext{file close} command) can be used to create and modify tables in \texttt{.tex} file format (or other types of desired file formats). In R, the \ctext{writeLines} function can be used to create an empty \texttt{.tex} file, which can be modified using the \ctext{write} function with the \ctext{append=TRUE} option. (A caveat in R is that two backslashes, i.e., \ctext{\textbackslash\textbackslash}, should be used in strings within the \ctext{write} function to produce a single backslash \ctext{\textbackslash} in the \texttt{.tex} output file.) To recall, the desired table formats are:
+
+\begin{table}[!ht]
+\begin{center}
+\caption*{\textbf{\textit{Desired format for table on impact of grace period on business activity and repayment outcomes}}}
+\footnotesize
+\setstretch{1.5}
+\begin{tabular}{l|c@{\hskip 10pt}|c@{\hskip 10pt}|c@{\hskip 10pt}|c}
+\hline\hline
+ & \textit{Control} & \textit{Simple OLS} & \textit{Adjusted OLS} & \textit{Augmented IPW} \\ [-1mm]
+ \textit{Outcome} & \textit{mean} & \textit{estimate of ATE} & \textit{estimate of ATE} & \textit{estimate of ATE} \\ \hline \hline
+ $ (i.j) $ Outcome label & $ \widehat{\alpha}_{i.j} $  & $ \widehat{\delta}_{i.j} \;\; ( \widetilde{\sigma}_{\delta,\,i.j} ) $  & $ \widehat{\theta}_{i.j} \;\; ( \widetilde{\sigma}_{\theta,\,i.j} ) $  & $ \widehat{\tau}_{i.j} \;\; ( \widetilde{\sigma}_{\tau,\,i.j} ) $ \\ [-1mm]
+ &  & $ [\tilde{p}^\circ_{\delta,\,i.j}] $ & $ [\tilde{p}^\circ_{\theta,\,i.j}] $ & $ [\tilde{p}^\circ_{\tau,\,i.j}] $ \\ \hline\hline
+\end{tabular}
+\end{center}
+\end{table}
+\vspace{-7mm}
+\begin{table}[!ht]
+\begin{center}
+\caption*{\textbf{\textit{Desired table format for stepdown inference on impacts of grace period for microfinance loans}}}
+\footnotesize
+\setstretch{1.5}
+\begin{tabular}{l|cc|ccc}
+\hline\hline
+ &  &  & \textit{Nonstudentized}  & \textit{Studentized} & \textit{Studentized}  \\ [-1mm]
+ & \textit{Control} & \textit{Augmented IPW} & \textit{test-based exact} & \textit{test-based exact} & \textit{test-based exact}  \\ [-1mm]
+ \textit{Outcome} & \textit{mean} & \textit{estimate of ATE} & \textit{single $ p$-value} & \textit{single $ p$-value} & \textit{stepdown $ p$-value}  \\ \hline 
+ $ (i.j) $ Outcome label & $  \widehat{\alpha}_{i.j} $ & $ \widehat{\tau}_{i.j} $ & $ \tilde{p}^\circ_{\tau,\,i.j} $ & $ \tilde{q}^\circ_{\tau,\,i.j} $ & $ \tilde{q}^\star_{\tau,\,i.j} $ \\ \hline \hline
+\end{tabular}
+\end{center}
+\end{table}
+\vspace{-3mm}
+
+A table in the first format can be created using the code files \ref{code:table_single_pvals.do} and \ref{code:table_single_pvals.R} provided in the \hyperref[sec:appendix]{Appendix}. A table in the second format can be created using the below code files: \texttt{table\_stepdown\_pvals.do} and \texttt{table\_stepdown\_pvals.R}.
+
+\vspace{5mm}
+
+\lstset{basicstyle=\scriptsize\ttfamily,breaklines=true}
+\lstset{frame=lines,backgroundcolor=\color{gray!20}}
+
+\noindent \textit{begin}\quad \texttt{table\_stepdown\_pvals.do}
+\lstinputlisting{../scripts/outputs/table_stepdown_pvals.do}
+\vspace{-3mm}
+\noindent \textit{end}\quad \texttt{table\_stepdown\_pvals.do}
+
+\vspace{5mm}
+
+\lstset{basicstyle=\scriptsize\ttfamily,breaklines=true}
+\lstset{frame=lines,backgroundcolor=\color{orange!20}}
+
+\noindent \textit{begin}\quad \texttt{table\_stepdown\_pvals.R}
+\lstinputlisting{../scripts/outputs/table_stepdown_pvals.R}
+\vspace{-3mm}
+\noindent \textit{end}\quad \texttt{table\_stepdown\_pvals.R}
+
+\vspace{5mm}
+
+Above Stata and R codes produce the \texttt{.tex} files \texttt{table\_stepdown\_pvals\_stata.tex} and \texttt{table\_stepdown\_pvals\_r.tex}, respectively, in the subfolder \texttt{../tables}. Such \texttt{.tex} files containing the desired tables can be produced using just a single run of \texttt{master.do} or \texttt{master.R} in the \texttt{../scripts} subfolder. These TeX tables can be easily included in the main manuscript files using a simple line, e.g., \ctext{\textbackslash input \{../tables/table\_stepdown\_pvals\_stata.tex\}}, without having to manually make any formatting changes to the tables in the manuscript. This approach also ensures that any updates made to the table results will also be automatically reflected in the manuscript.
+
+To illustrate the output of the code files for the worked example, Tables \ref{table:table_stepdown_pvals_stata} and \ref{table:table_stepdown_pvals_r}, which are similar up to simulation error, present stepdown inference based on the augmented IPW estimates, while Tables \ref{table:table_single_pvals_stata} and \ref{table:table_single_pvals_r} present three ATE estimates along with their bootstrap standard errors and exact $p$-values for each outcome. All of these supplementary results, and especially those in Tables \ref{table:table_stepdown_pvals_stata} and \ref{table:table_stepdown_pvals_r} based on doubly robust estimates and design-based finite-sample inferences corrected for multiple testing, bolster \citeauthor{field2013does}'s (\citeyear{field2013does}) conclusion that ``debt contracts that require early repayment discourage illiquid risky investment and thereby limit the potential impact of microfinance on microenterprise growth and household poverty.''
+
+
+\input{../tables/table_stepdown_pvals_stata.tex}
+\input{../tables/table_stepdown_pvals_r.tex}
+\input{../tables/table_single_pvals_stata.tex}
+\input{../tables/table_single_pvals_r.tex}
+
+\clearpage
+
+\setstretch{1}
+\bibliographystyle{chicago}
+\bibliography{references}
+
+\clearpage
+
+\onehalfspacing
+
+\appendix
+\section*{Appendix}
+\label{sec:appendix}
+
+\vspace{5mm}
+
+\lstset{basicstyle=\scriptsize\ttfamily,breaklines=true}
+\lstset{frame=lines,backgroundcolor=\color{orange!20}}
+
+\noindent \textit{begin}\quad \textlabel{\texttt{aipw\_strata.R}}{code:aipw_strata.R}
+\lstinputlisting{../scripts/programs/aipw_strata.R}
+\vspace{-3mm}
+\noindent \textit{end}\quad \texttt{aipw\_strata.R}
+
+\vspace{10mm}
+
+\lstset{basicstyle=\scriptsize\ttfamily,breaklines=true}
+\lstset{frame=lines,backgroundcolor=\color{gray!20}}
+
+\noindent \textit{begin}\quad \textlabel{\texttt{stepdown\_pval.do}}{code:stepdown_pval.do}
+\lstinputlisting{../scripts/programs/stepdown_pval.do}
+\vspace{-3mm}
+\noindent \textit{end}\quad \texttt{stepdown\_pval.do}
+
+\vspace{10mm}
+
+\lstset{basicstyle=\scriptsize\ttfamily,breaklines=true}
+\lstset{frame=lines,backgroundcolor=\color{orange!20}}
+
+\noindent \textit{begin}\quad \textlabel{\texttt{outcomes.R}}{code:outcomes.R}
+\lstinputlisting{../scripts/simulations/outcomes.R}
+\vspace{-3mm}
+\noindent \textit{end}\quad \texttt{outcomes.R}
+
+\vspace{10mm}
+
+\lstset{basicstyle=\scriptsize\ttfamily,breaklines=true}
+\lstset{frame=lines,backgroundcolor=\color{orange!20}}
+
+\noindent \textit{begin}\quad \textlabel{\texttt{ate\_estimators.R}}{code:ate_estimators.R}
+\lstinputlisting{../scripts/simulations/ate_estimators.R}
+\vspace{-3mm}
+\noindent \textit{end}\quad \texttt{ate\_estimators.R}
+
+\vspace{10mm}
+
+\lstset{basicstyle=\scriptsize\ttfamily,breaklines=true}
+\lstset{frame=lines,backgroundcolor=\color{gray!20}}
+
+\noindent \textit{begin}\quad \textlabel{\texttt{observed\_estimates.do}}{code:observed_estimates.do}
+\lstinputlisting{../scripts/simulations/observed_estimates.do}
+\vspace{-3mm}
+\noindent \textit{end}\quad \texttt{observed\_estimates.do}
+
+\vspace{10mm}
+
+\lstset{basicstyle=\scriptsize\ttfamily,breaklines=true}
+\lstset{frame=lines,backgroundcolor=\color{orange!20}}
+
+\noindent \textit{begin}\quad \textlabel{\texttt{bootstrap\_dist.R}}{code:bootstrap_dist.R}
+\lstinputlisting{../scripts/simulations/bootstrap_dist.R}
+\vspace{-3mm}
+\noindent \textit{end}\quad \texttt{bootstrap\_dist.R}
+
+\vspace{10mm}
+
+\lstset{basicstyle=\scriptsize\ttfamily,breaklines=true}
+\lstset{frame=lines,backgroundcolor=\color{gray!20}}
+
+\noindent \textit{begin}\quad \textlabel{\texttt{bootstrap\_dist.do}}{code:bootstrap_dist.do}
+\lstinputlisting{../scripts/simulations/bootstrap_dist.do}
+\vspace{-3mm}
+\noindent \textit{end}\quad \texttt{bootstrap\_dist.do}
+
+\vspace{10mm}
+
+\lstset{basicstyle=\scriptsize\ttfamily,breaklines=true}
+\lstset{frame=lines,backgroundcolor=\color{orange!20}}
+
+\noindent \textit{begin}\quad \textlabel{\texttt{appended\_results.R}}{code:appended_results.R}
+\lstinputlisting{../scripts/outputs/appended_results.R}
+\vspace{-3mm}
+\noindent \textit{end}\quad \texttt{appended\_results.R}
+
+\vspace{10mm}
+
+\lstset{basicstyle=\scriptsize\ttfamily,breaklines=true}
+\lstset{frame=lines,backgroundcolor=\color{gray!20}}
+
+\noindent \textit{begin}\quad \textlabel{\texttt{table\_single\_pvals.do}}{code:table_single_pvals.do}
+\lstinputlisting{../scripts/outputs/table_single_pvals.do}
+\vspace{-3mm}
+\noindent \textit{end}\quad \texttt{table\_single\_pvals.do}
+
+\vspace{10mm}
+
+\lstset{basicstyle=\scriptsize\ttfamily,breaklines=true}
+\lstset{frame=lines,backgroundcolor=\color{orange!20}}
+
+\noindent \textit{begin}\quad \textlabel{\texttt{table\_single\_pvals.R}}{code:table_single_pvals.R}
+\lstinputlisting{../scripts/outputs/table_single_pvals.R}
+\vspace{-3mm}
+\noindent \textit{end}\quad \texttt{table\_single\_pvals.R}
+
+\end{document}

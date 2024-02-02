@@ -1,0 +1,42 @@
+\begin{table}[!ht]
+\begin{center}
+\caption{\textit{\textbf{Stepdown inference on impacts of grace period for microfinance loans (using R)}}}
+\label{table:table_stepdown_pvals_r}
+\scriptsize \vspace{2mm}
+\setstretch{1.5}
+\begin{tabular}{l|cc|ccc}
+\hline\hline
+&  &  & \textit{Nonstudentized}  & \textit{Studentized} & \textit{Studentized} \\ [-1mm]
+ & \textit{Control} & \textit{Augmented IPW} & \textit{test-based exact} & \textit{test-based exact} & \textit{test-based exact} \\ [-1mm]
+\textit{Outcome} & \textit{mean} & \textit{estimate of ATE} & \textit{single $ p$-value} & \textit{single $ p$-value} & \textit{stepdown $ p$-value} \\ \hline
+ $ (1.1) $ Total business spending & $ 6278.81 $  & $ 426.98 $  & $  \mathbf { 0.0440 }  $ & $  \mathbf { 0.0505 }  $ & $  \mathbf { 0.0510 }  $\\
+ $ (1.2) $ Total nonbusiness spending & $ 1119.35 $  & $ -458.99 $  & $  \mathbf { 0.0205 }  $ & $  \mathbf { 0.0220 }  $ & $  \mathbf { 0.0435 }  $\\
+ $ (1.3) $ New business & $ 0.02 $  & $ 0.03 $  & $  \mathbf { 0.0220 }  $ & $  \mathbf { 0.0230 }  $ & $  \mathbf { 0.0505 }  $\\
+\hline
+ $ (2.1) $ Average weekly profits & $ 1586.80 $  & $ 923.61 $  & $  \mathbf { 0.0235 }  $ & $  \mathbf { 0.0240 }  $ & $  \mathbf { 0.0270 }  $\\
+ $ (2.2) $ Log of monthly household income & $ 9.32 $  & $ 0.20 $  & $  \mathbf { 0.0180 }  $ & $  \mathbf { 0.0175 }  $ & $  \mathbf { 0.0315 }  $\\
+ $ (2.3) $ Capital & $ 35730.16 $  & $ 38151.95 $  & $  \mathbf { 0.0140 }  $ & $  \mathbf { 0.0185 }  $ & $  \mathbf { 0.0315 }  $\\
+\hline
+ $ (3.1) $ Not repaid 8 weeks after due date & $ 0.04 $  & $ 0.08 $  & $  \mathbf { 0.0315 }  $ & $  \mathbf { 0.0295 }  $ & $  \mathbf { 0.0600 }  $\\
+ $ (3.2) $ Not repaid 24 weeks after due date & $ 0.02 $  & $ 0.06 $  & $  \mathbf { 0.0655 }  $ & $  \mathbf { 0.0575 }  $ & $  \mathbf { 0.0850 }  $\\
+ $ (3.3) $ Not repaid 52 weeks after due date & $ 0.02 $  & $ 0.06 $  & $  \mathbf { 0.0615 }  $ & $  \mathbf { 0.0525 }  $ & $  \mathbf { 0.0775 }  $\\
+ $ (3.4) $ Outstanding loan 52 weeks after due date & $ 69.65 $  & $ 126.66 $  & $ 0.2050 $ & $ 0.1915 $ & $ 0.1919 $\\
+\hline
+ $ (4.1) $ Repaid at least 50\% of loan & $ 0.99 $  & $ -0.008 $  & $ 0.6780 $ & $ 0.6660 $ & $ 0.8836 $\\
+ $ (4.2) $ Made first half of repayments on time & $ 0.50 $  & $ -0.02 $  & $ 0.6980 $ & $ 0.7025 $ & $ 0.8836 $\\
+ $ (4.3) $ Made first payment & $ 0.95 $  & $ 0.03 $  & $ 0.3410 $ & $ 0.3400 $ & $ 0.6987 $\\
+\hline
+ $ (5.1) $ Business closure & $ 0.39 $  & $ -0.06 $  & $ 0.1380 $ & $ 0.1350 $ & $ 0.3638 $\\
+ $ (5.2) $ Profit range length & $ 2361.63 $  & $ 466.49 $  & $ 0.3815 $ & $ 0.3700 $ & $ 0.6002 $\\
+ $ (5.3) $ Reapid by selling items at discount & $ 0.05 $  & $ -0.01 $  & $ 0.4060 $ & $ 0.3970 $ & $ 0.6002 $\\
+\hline
+ $ (6.1) $ Customers buy on credit & $ 0.43 $  & $ 0.10 $  & $  \mathbf { 0.0090 }  $ & $  \mathbf { 0.0080 }  $ & $  \mathbf { 0.0155 }  $\\
+ $ (6.2) $ Customers pre-order items & $ 0.40 $  & $ 0.10 $  & $  \mathbf { 0.0175 }  $ & $  \mathbf { 0.0155 }  $ & $  \mathbf { 0.0220 }  $\\
+ $ (6.3) $ Number of items for sale & $ 5.61 $  & $ 6.67 $  & $  \mathbf { 0.0695 }  $ & $  \mathbf { 0.0760 }  $ & $  \mathbf { 0.0765 }  $\\
+\hline
+\hline
+\end{tabular}
+\end{center} \vspace{-2mm}
+\setstretch{1}\noindent \scriptsize
+\textit{Note}: For each outcome of interest, this table reports the control mean, augmented inverse probability weighting (AIPW) estimate of the average treatment effect (ATE), and the following three $ p$-values for testing sharp null hypotheses of no treatment effects: exact single $ p$-value based on the nonstudentized AIPW test statistic; exact single $ p$-value based on the studentized AIPW test statistic; and exact stepdown $ p$-value based on the studentized AIPW test statistic. The latter $ p$-value (i.e., the stepdown $ p$-value) accounts for multiple testing but not the former two single $ p$-values. The blocks of outcomes used for multiple testing are separated in the above table using a horizontal divider line.
+\end{table}
