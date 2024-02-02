@@ -1,0 +1,59 @@
+\begin{table}[!ht]
+\begin{center}
+\caption{\textit{\textbf{Impact of grace period on business activity and repayment outcomes (using R)}}}
+\label{table:table_single_pvals_r}
+\scriptsize \vspace{2mm}
+\setstretch{1.5}
+\begin{tabular}{l|c@{\hskip 10pt}|c@{\hskip 10pt}|c@{\hskip 10pt}|c}
+\hline\hline
+ & \textit{Control} & \textit{Simple OLS} & \textit{Adjusted OLS} & \textit{Augmented IPW} \\ [-1mm]
+ \textit{Outcome} & \textit{mean} & \textit{estimate of ATE} & \textit{estimate of ATE} & \textit{estimate of ATE} \\ \hline \hline
+ $ (1.1) $ Total business spending & $ 6278.81 $  & $ 364.89 \;\; ( 176.51 ) $  & $ 383.92 \;\; ( 183.40 ) $  & $ 426.98 \;\; ( 241.94 ) $ \\ [-1mm]
+ &  & $ [ \mathbf { 0.0560 }  ] $ & $ [ \mathbf { 0.0485 }  ] $ & $ [ \mathbf { 0.0440 }  ] $ \\ \hline
+ $ (1.2) $ Total nonbusiness spending & $ 1119.35 $  & $ -356.08 \;\; ( 171.44 ) $  & $ -371.60 \;\; ( 178.76 ) $  & $ -458.99 \;\; ( 226.87 ) $ \\ [-1mm]
+ &  & $ [ \mathbf { 0.0455 }  ] $ & $ [ \mathbf { 0.0390 }  ] $ & $ [ \mathbf { 0.0205 }  ] $ \\ \hline
+ $ (1.3) $ New business & $ 0.02 $  & $ 0.03 \;\; ( 0.01 ) $  & $ 0.03 \;\; ( 0.01 ) $  & $ 0.03 \;\; ( 0.02 ) $ \\ [-1mm]
+ &  & $ [ \mathbf { 0.0595 }  ] $ & $ [ \mathbf { 0.0710 }  ] $ & $ [ \mathbf { 0.0220 }  ] $ \\ \hline
+\hline
+ $ (2.1) $ Average weekly profits & $ 1586.80 $  & $ 906.57 \;\; ( 364.54 ) $  & $ 902.91 \;\; ( 374.67 ) $  & $ 923.61 \;\; ( 539.09 ) $ \\ [-1mm]
+ &  & $ [ \mathbf { 0.0040 }  ] $ & $ [ \mathbf { 0.0040 }  ] $ & $ [ \mathbf { 0.0235 }  ] $ \\ \hline
+ $ (2.2) $ Log of monthly household income & $ 9.32 $  & $ 0.19 \;\; ( 0.08 ) $  & $ 0.20 \;\; ( 0.08 ) $  & $ 0.20 \;\; ( 0.09 ) $ \\ [-1mm]
+ &  & $ [ \mathbf { 0.0140 }  ] $ & $ [ \mathbf { 0.0090 }  ] $ & $ [ \mathbf { 0.0180 }  ] $ \\ \hline
+ $ (2.3) $ Capital & $ 35730.16 $  & $ 28770.19 \;\; ( 11123.63 ) $  & $ 35733.14 \;\; ( 13393.51 ) $  & $ 38151.95 \;\; ( 18367.38 ) $ \\ [-1mm]
+ &  & $ [ \mathbf { 0.0065 }  ] $ & $ [ \mathbf { 0.0010 }  ] $ & $ [ \mathbf { 0.0140 }  ] $ \\ \hline
+\hline
+ $ (3.1) $ Not repaid 8 weeks after due date & $ 0.04 $  & $ 0.09 \;\; ( 0.03 ) $  & $ 0.08 \;\; ( 0.03 ) $  & $ 0.08 \;\; ( 0.04 ) $ \\ [-1mm]
+ &  & $ [ \mathbf { 0.0160 }  ] $ & $ [ \mathbf { 0.0225 }  ] $ & $ [ \mathbf { 0.0315 }  ] $ \\ \hline
+ $ (3.2) $ Not repaid 24 weeks after due date & $ 0.02 $  & $ 0.07 \;\; ( 0.03 ) $  & $ 0.06 \;\; ( 0.03 ) $  & $ 0.06 \;\; ( 0.03 ) $ \\ [-1mm]
+ &  & $ [ \mathbf { 0.0140 }  ] $ & $ [ \mathbf { 0.0305 }  ] $ & $ [ \mathbf { 0.0655 }  ] $ \\ \hline
+ $ (3.3) $ Not repaid 52 weeks after due date & $ 0.02 $  & $ 0.06 \;\; ( 0.02 ) $  & $ 0.06 \;\; ( 0.02 ) $  & $ 0.06 \;\; ( 0.03 ) $ \\ [-1mm]
+ &  & $ [ \mathbf { 0.0220 }  ] $ & $ [ \mathbf { 0.0265 }  ] $ & $ [ \mathbf { 0.0615 }  ] $ \\ \hline
+ $ (3.4) $ Outstanding loan 52 weeks after due date & $ 69.65 $  & $ 148.69 \;\; ( 80.92 ) $  & $ 148.99 \;\; ( 83.54 ) $  & $ 126.66 \;\; ( 91.64 ) $ \\ [-1mm]
+ &  & $ [0.1030 ] $ & $ [0.1120 ] $ & $ [0.2050 ] $ \\ \hline
+\hline
+ $ (4.1) $ Repaid at least 50\% of loan & $ 0.99 $  & $ -0.01 \;\; ( 0.01 ) $  & $ -0.02 \;\; ( 0.02 ) $  & $ -0.008 \;\; ( 0.02 ) $ \\ [-1mm]
+ &  & $ [0.4315 ] $ & $ [0.3660 ] $ & $ [0.6780 ] $ \\ \hline
+ $ (4.2) $ Made first half of repayments on time & $ 0.50 $  & $ -0.008 \;\; ( 0.06 ) $  & $ -0.02 \;\; ( 0.05 ) $  & $ -0.02 \;\; ( 0.06 ) $ \\ [-1mm]
+ &  & $ [0.9000 ] $ & $ [0.6665 ] $ & $ [0.6980 ] $ \\ \hline
+ $ (4.3) $ Made first payment & $ 0.95 $  & $ 0.03 \;\; ( 0.02 ) $  & $ 0.02 \;\; ( 0.02 ) $  & $ 0.03 \;\; ( 0.03 ) $ \\ [-1mm]
+ &  & $ [0.3510 ] $ & $ [0.3785 ] $ & $ [0.3410 ] $ \\ \hline
+\hline
+ $ (5.1) $ Business closure & $ 0.39 $  & $ -0.07 \;\; ( 0.03 ) $  & $ -0.07 \;\; ( 0.03 ) $  & $ -0.06 \;\; ( 0.04 ) $ \\ [-1mm]
+ &  & $ [ \mathbf { 0.0325 }  ] $ & $ [ \mathbf { 0.0610 }  ] $ & $ [0.1380 ] $ \\ \hline
+ $ (5.2) $ Profit range length & $ 2361.63 $  & $ 686.63 \;\; ( 363.09 ) $  & $ 713.87 \;\; ( 396.78 ) $  & $ 466.49 \;\; ( 488.63 ) $ \\ [-1mm]
+ &  & $ [ \mathbf { 0.0845 }  ] $ & $ [ \mathbf { 0.0820 }  ] $ & $ [0.3815 ] $ \\ \hline
+ $ (5.3) $ Reapid by selling items at discount & $ 0.05 $  & $ -0.02 \;\; ( 0.01 ) $  & $ -0.02 \;\; ( 0.01 ) $  & $ -0.01 \;\; ( 0.02 ) $ \\ [-1mm]
+ &  & $ [0.1090 ] $ & $ [0.2435 ] $ & $ [0.4060 ] $ \\ \hline
+\hline
+ $ (6.1) $ Customers buy on credit & $ 0.43 $  & $ 0.10 \;\; ( 0.04 ) $  & $ 0.11 \;\; ( 0.04 ) $  & $ 0.10 \;\; ( 0.04 ) $ \\ [-1mm]
+ &  & $ [ \mathbf { 0.0165 }  ] $ & $ [ \mathbf { 0.0010 }  ] $ & $ [ \mathbf { 0.0090 }  ] $ \\ \hline
+ $ (6.2) $ Customers pre-order items & $ 0.40 $  & $ 0.10 \;\; ( 0.03 ) $  & $ 0.11 \;\; ( 0.03 ) $  & $ 0.10 \;\; ( 0.04 ) $ \\ [-1mm]
+ &  & $ [ \mathbf { 0.0030 }  ] $ & $ [ \mathbf { 0.0035 }  ] $ & $ [ \mathbf { 0.0175 }  ] $ \\ \hline
+ $ (6.3) $ Number of items for sale & $ 5.61 $  & $ 5.54 \;\; ( 2.47 ) $  & $ 6.05 \;\; ( 2.57 ) $  & $ 6.67 \;\; ( 4.06 ) $ \\ [-1mm]
+ &  & $ [ \mathbf { 0.0075 }  ] $ & $ [ \mathbf { 0.0040 }  ] $ & $ [ \mathbf { 0.0695 }  ] $ \\ \hline
+\hline
+\end{tabular}
+\end{center} \vspace{-2mm}
+\setstretch{1}\noindent \scriptsize
+\textit{Note}: For each outcome of interest, the above table reports the control mean and three ATE estimates (based on simple OLS, adjusted OLS, and augmented IPW methods) along with their bootstrap standard errors in parentheses (next to the estimates). Below each ATE estimate is its exact $ p$-value (reported within brackets) based on a randomization test using the raw estimate as the test statistic without studentization.
+\end{table}
